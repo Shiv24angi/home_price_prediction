@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Predictor</title>
+    <style>
+        /* Basic CSS for styling the page */
+       body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(to bottom, #ffb6b9, #fcd5ce, #d8c4ff, #a6c1ee);
+    color: #2c003e;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    width: 100%;
+    margin-top: 30px;
+    backdrop-filter: blur(6px);
+}
+
+h1 {
+    text-align: center;
+    color: #8338ec;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #5c005c;
+}
+
+input[type="number"], select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ffb3c1;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff0f5;
+    transition: border-color 0.3s ease;
+}
+
+input[type="number"]:focus, select:focus {
+    border-color: #ff758f;
+    outline: none;
+}
+
+.radio-group label {
+    display: inline-block;
+    margin-right: 25px;
+    font-weight: normal;
+    cursor: pointer;
+    color: #4c005c;
+}
+
+.radio-group input[type="radio"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #ff758f, #ffb199);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background 0.4s ease;
+}
+
+button:hover {
+    background: linear-gradient(to right, #ff6a88, #ffb347);
+}
+
+#predictionResult {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border: 1px solid #ffdd57;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1.3em;
+    color: #856404;
+    font-weight: bold;
+    display: none;
+}
+
+#predictionResult.error {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏡 House Price Predictor</h1>
+        <form id="predictionForm">
+            <div class="input-group">
+                <label for="area">Area (in sq ft):</label>
+                <input type="number" id="area" name="area" value="5000" min="1000" max="20000" required>
+            </div>
+            <div class="input-group">
+                <label for="bedrooms">Bedrooms:</label>
+                <input type="number" id="bedrooms" name="bedrooms" value="3" min="1" max="6" required>
+            </div>
+            <div class="input-group">
+                <label for="bathrooms">Bathrooms:</label>
+                <input type="number" id="bathrooms" name="bathrooms" value="2" min="1" max="4" required>
+            </div>
+            <div class="input-group">
+                <label for="stories">Stories:</label>
+                <input type="number" id="stories" name="stories" value="2" min="1" max="4" required>
+            </div>
+            <div class="input-group">
+                <label for="parking">Parking Spaces:</label>
+                <input type="number" id="parking" name="parking" value="1" min="0" max="3" required>
+            </div>
+
+            <div class="input-group">
+                <label>Main Road Access:</label>
+                <div class="radio-group">
+                    <input type="radio" id="mainroad_yes" name="mainroad" value="yes" checked> <label for="mainroad_yes">Yes</label>
+                    <input type="radio" id="mainroad_no" name="mainroad" value="no"> <label for="mainroad_no">No</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Guest Room:</label>
+                <div class="radio-group">
+                    <input type="radio" id="guestroom_yes" name="guestroom" value="yes"> <label for="guestroom_yes">Yes</label>
+                    <input type="radio" id="guestroom_no" name="guestroom" value="no" checked> <label for="guestroom_no">No</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Basement:</label>
+                <div class="radio-group">
+                    <input type="radio" id="basement_yes" name="basement" value="yes"> <label for="basement_yes">Yes</label>
+                    <input type="radio" id="basement_no" name="basement" value="no" checked> <label for="basement_no">No</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Hot Water Heating:</label>
+                <div class="radio-group">
+                    <input type="radio" id="hotwaterheating_yes" name="hotwaterheating" value="yes"> <label for="hotwaterheating_yes">Yes</label>
+                    <input type="radio" id="hotwaterheating_no" name="hotwaterheating" value="no" checked> <label for="hotwaterheating_no">No</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Air Conditioning:</label>
+                <div class="radio-group">
+                    <input type="radio" id="airconditioning_yes" name="airconditioning" value="yes" checked> <label for="airconditioning_yes">Yes</label>
+                    <input type="radio" id="airconditioning_no" name="airconditioning" value="no"> <label for="airconditioning_no">No</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Preferred Area:</label>
+                <div class="radio-group">
+                    <input type="radio" id="prefarea_yes" name="prefarea" value="yes" checked> <label for="prefarea_yes">Yes</label>
+                    <input type="radio" id="prefarea_no" name="prefarea" value="no"> <label for="prefarea_no">No</label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="furnishingstatus">Furnishing Status:</label>
+                <select id="furnishingstatus" name="furnishingstatus">
+                    <option value="furnished">Furnished</option>
+                    <option value="semi-furnished">Semi-Furnished</option>
+                    <option value="unfurnished">Unfurnished</option>
+                </select>
+            </div>
+
+            <button type="submit">Predict Price</button>
+        </form>
+        <div id="predictionResult"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(event.target);
+            const data = {};
+            // Populate data object from form inputs
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            const predictionResultDiv = document.getElementById('predictionResult');
+            predictionResultDiv.style.display = 'none'; // Hide previous result
+            predictionResultDiv.classList.remove('error'); // Remove error class
+
+            try {
+                // Send data to Flask backend
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json' // Indicate sending JSON
+                    },
+                    body: JSON.stringify(data) // Convert data object to JSON string
+                });
+
+                const result = await response.json(); // Parse JSON response from backend
+
+                if (response.ok) { // Check if the response status is 200 OK
+                    predictionResultDiv.textContent = `Predicted House Price: ₹${result.predicted_price.toLocaleString('en-IN')}`;
+                    predictionResultDiv.style.display = 'block';
+                } else {
+                    predictionResultDiv.textContent = `Error: ${result.error || 'Something went wrong.'}`;
+                    predictionResultDiv.classList.add('error');
+                    predictionResultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Network or parsing error:', error);
+                predictionResultDiv.textContent = 'An error occurred while connecting to the server. Please try again.';
+                predictionResultDiv.classList.add('error');
+                predictionResultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
